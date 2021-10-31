@@ -5,7 +5,6 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.ArrayList;
-//import java.util.Scanner;
 
 public class HiloBiblioteca implements Runnable {
 	
@@ -50,6 +49,7 @@ public class HiloBiblioteca implements Runnable {
 			
 			String texto = "";
 			boolean continuar = true;
+			HiloBiblioteca hiloBusca = new HiloBiblioteca();
 			
 			
 			while (continuar) {
@@ -65,8 +65,7 @@ public class HiloBiblioteca implements Runnable {
 				
 					// Procesa la petición del cliente para buscar por ISBN
 					if (texto.contains("@")) {
-						
-						HiloBiblioteca hiloBusca = new HiloBiblioteca();
+												
 						texto = texto.replace("@", "");
 						respuestaServidor= hiloBusca.buscaIsbn(texto.trim().toString());
 						
@@ -77,7 +76,6 @@ public class HiloBiblioteca implements Runnable {
 					// Procesa la petición del cliente para buscar por Título
 					} else if (texto.contains("/"))  {
 						
-						HiloBiblioteca hiloBusca = new HiloBiblioteca();
 						texto = texto.replace("/", "").trim();
 						respuestaServidor= hiloBusca.buscaTitulo(texto.trim().toString());
 						
@@ -88,19 +86,16 @@ public class HiloBiblioteca implements Runnable {
 					// Procesa la petición del cliente para buscar por autor	
 					} else if (texto.contains("*"))  {
 							
-						HiloBiblioteca hiloBusca = new HiloBiblioteca();
 						texto = texto.replace("*", "").trim();
 						respuestaServidor= hiloBusca.buscaAutor(texto.trim().toString());
 							
 						System.out.println(hilo.getName() + " busca el libro: " + respuestaServidor);
 							
-						
 						salida.println(respuestaServidor);	
 					
 					// Procesa la petición del cliente para añadir un libro completo
 					}else if (texto.contains("%"))  {
 							
-						HiloBiblioteca hiloBusca = new HiloBiblioteca();
 						String[] textoRecibido = texto.split("%");
 						Libro libro= new Libro(textoRecibido[0].toString(), textoRecibido[1].toString(),
 												textoRecibido[2].toString(), Double.parseDouble(textoRecibido[3].toString()));
@@ -162,12 +157,12 @@ public class HiloBiblioteca implements Runnable {
 	//Método para buscar por autor
 	public String buscaAutor(String autor){
 		Libro libro;
-		String resultado = "";
+		String resultado = "€";
 		   for(int i=0; i<biblioteca.size(); i++){
 			   libro=biblioteca.get(i);
 		            
 		       if (libro.getAutor().equals(autor)) 
-		    	   resultado+= libro.toString() + " >>> ";
+		    	   resultado+= libro.toString();
 		     } 
 		   return resultado;
 	        
@@ -210,43 +205,9 @@ public class HiloBiblioteca implements Runnable {
 			this.biblioteca = biblioteca;
 		}
 
-
-		public static void main(String[] args) {
+			 			
 			
-		HiloBiblioteca hilosss = new HiloBiblioteca();
-		String salida = hilosss.buscaAutor("Patrick Rothfuss");
-		System.out.println(salida);
-		hilosss.mostrarBiblioteca();
-			
-//			String libros[]=new String[3];
-//			libros[0]="gfdgfdhbgfd";
-//			libros[1]="iiiiiiiiiii";
-//			libros[2]="yhhdhhhhhh";
-//			
-//			 for (int i=0; i<libros.length; i++) {
-//				 System.out.println(libros[i]);	
-//		Scanner sc= new Scanner(System.in);
-//		
-//		System.out.println("introduce un ISBN");
-//		String textos = sc.nextLine() + ("%");
-//		System.out.println("introduce un autor");
-//		textos += sc.nextLine() + ("%");
-//		
-//		System.out.println(textos);
-		
-//		sc.close();
-			
-//		HiloBiblioteca hilo1= new HiloBiblioteca();
-//		Libro libro1= new Libro("666", "caca", "culo", 22);
-//		hilo1.addLibro(libro1);
-//		System.out.println(hilo1.mostrarUltimoBiblioteca());
-//		
-		
-		
-			 }
-			
-			
-		}
+}
 	
 	
 

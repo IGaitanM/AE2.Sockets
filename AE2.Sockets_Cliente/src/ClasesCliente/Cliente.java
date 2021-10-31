@@ -71,7 +71,6 @@ public class Cliente {
 						System.out.println("Añade el precio");
 						texto += sc.nextLine() + "%";
 						
-						
 						break;
 					case "5":
 						
@@ -82,7 +81,7 @@ public class Cliente {
 						
 					default:
 					
-					System.out.println("Elige la opción escribiendo un número, por favor");
+					System.out.println("Elige la opción escribiendo un número del menu, por favor \n");
 					
 					
 				}
@@ -92,9 +91,14 @@ public class Cliente {
 				System.out.println("CLIENTE: Esperando datos del libro ...... ");				
 				String respuesta = entradaBuffer.readLine();
 				
+				if (respuesta.contains("€")){
+					respuesta= respuesta.replace("€", "\n");
+					System.out.println("CLIENTE: Servidor responde: " + respuesta);
+				}else {
+				
 				System.out.println("CLIENTE: Servidor responde: " + respuesta);
 						
-				
+				}
 			}while(continuar);
 			
 			//Cerramos la conexion
