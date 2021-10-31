@@ -28,7 +28,7 @@ public class HiloBiblioteca implements Runnable {
 		biblioteca.add(new Libro("9788448037246", "El Elfo Oscuro", "R.A Slvatore", 190));
 		biblioteca.add(new Libro("9788408043645", "La sombra del viento", "Carlos Ruiz Zafón", 8));
 		biblioteca.add(new Libro("9788496940000", "El Médico", "Noah Gordon", 11.35));
-		biblioteca.add(new Libro("9788416858217", "Materia OScura", "3", 16.15));
+		biblioteca.add(new Libro("9788416858217", "Materia OScura", "Blake Crouch", 16.15));
 		biblioteca.add(new Libro("9788499899619", "El Temor de un Hombre Sabio", "Patrick Rothfuss", 10.95));
 		
 	}
@@ -90,7 +90,7 @@ public class HiloBiblioteca implements Runnable {
 							
 						HiloBiblioteca hiloBusca = new HiloBiblioteca();
 						texto = texto.replace("*", "").trim();
-						respuestaServidor= hiloBusca.buscaAutor(texto.toString());
+						respuestaServidor= hiloBusca.buscaAutor(texto.trim().toString());
 							
 						System.out.println(hilo.getName() + " busca el libro: " + respuestaServidor);
 							
@@ -121,8 +121,7 @@ public class HiloBiblioteca implements Runnable {
 				
 			//Cerramos el socket
 			socketAlCliente.close();
-			//Notese que si no cerramos el socket ni en el servidor ni en el cliente, mantendremos
-			//la comunicacion abierta
+			
 		} catch (IOException e) {
 			System.err.println("HiloBiblioteca: Error de entrada/salida");
 			e.printStackTrace();
@@ -132,8 +131,9 @@ public class HiloBiblioteca implements Runnable {
 		}
 	}
 	
-	//Métodos para manejar el arrayList de la bibioteca
+	//METODOS PARA MANEJAR EL ARRAYLIST DE LA BIBLIOTECA
 	
+	//Método para buscar por ISBN
 	public String buscaIsbn(String isbn){
         Libro libro;           
         for(int i=0; i<biblioteca.size(); i++){
@@ -161,19 +161,16 @@ public class HiloBiblioteca implements Runnable {
 	
 	//Método para buscar por autor
 	public String buscaAutor(String autor){
-		Libro libro = new Libro();
+		Libro libro;
 		String resultado = "";
 		   for(int i=0; i<biblioteca.size(); i++){
 			   libro=biblioteca.get(i);
 		            
-		       if (libro.getAutor().equals(autor)) {
-		    	   resultado+= libro.toString() + "  ,  ";
-		    	   if (i == (biblioteca.size() - 1)) {
-		    		   return resultado;
-		            }
-		        }
+		       if (libro.getAutor().equals(autor)) 
+		    	   resultado+= libro.toString() + " >>> ";
 		     } 
-	        return "No hay libros de ese autor en la biblioteca";
+		   return resultado;
+	        
 	    }
 						
 	//Método para mostrar al lista de libros de la biblioteca.            	      
@@ -215,10 +212,11 @@ public class HiloBiblioteca implements Runnable {
 
 
 		public static void main(String[] args) {
-//			
-//		HiloBiblioteca hilosss = new HiloBiblioteca();
-//		String salida = hilosss.buscaAutor("Patrick Rothfuss");
-//		hilosss.mostrarBiblioteca();
+			
+		HiloBiblioteca hilosss = new HiloBiblioteca();
+		String salida = hilosss.buscaAutor("Patrick Rothfuss");
+		System.out.println(salida);
+		hilosss.mostrarBiblioteca();
 			
 //			String libros[]=new String[3];
 //			libros[0]="gfdgfdhbgfd";

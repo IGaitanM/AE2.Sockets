@@ -110,7 +110,7 @@ public class Libro {
 
 	@Override
 	public String toString() {
-		return ", TÍTULO: " + titulo + ", AUTOR: " + autor + ", ISBN: " + isbn  + ", PRECIO: " + precio + "€";
+		return "TÍTULO: " + titulo + ", AUTOR: " + autor + ", ISBN: " + isbn  + ", PRECIO: " + precio + "€";
 	}
 
 	
