@@ -19,13 +19,7 @@ public class HiloBiblioteca implements Runnable {
 		hilo = new Thread(this, "Cliente_"+numCliente);
 		this.socketAlCliente = socketAlCliente;
 		hilo.start();
-		biblioteca= new ArrayList<Libro>();
-		biblioteca.add(new Libro("9780756413712", "El Nombre Del Viento", "Patrick Rothfuss", 10.40));
-		biblioteca.add(new Libro("9788448037246", "El Elfo Oscuro", "R.A Slvatore", 190));
-		biblioteca.add(new Libro("9788408043645", "La sombra del viento", "Carlos Ruiz Zafón", 8));
-		biblioteca.add(new Libro("9788496940000", "El Médico", "Noah Gordon", 11.35));
-		biblioteca.add(new Libro("9788416858217", "Materia OScura", "Blake Crouch", 16.15));
-		biblioteca.add(new Libro("9788499899619", "El Temor de un Hombre Sabio", "Patrick Rothfuss", 10.95));
+		
 	}
 	
 	public HiloBiblioteca () {
@@ -34,7 +28,7 @@ public class HiloBiblioteca implements Runnable {
 		biblioteca.add(new Libro("9788448037246", "El Elfo Oscuro", "R.A Slvatore", 190));
 		biblioteca.add(new Libro("9788408043645", "La sombra del viento", "Carlos Ruiz Zafón", 8));
 		biblioteca.add(new Libro("9788496940000", "El Médico", "Noah Gordon", 11.35));
-		biblioteca.add(new Libro("9788416858217", "Materia OScura", "Blake Crouch", 16.15));
+		biblioteca.add(new Libro("9788416858217", "Materia OScura", "3", 16.15));
 		biblioteca.add(new Libro("9788499899619", "El Temor de un Hombre Sabio", "Patrick Rothfuss", 10.95));
 		
 	}
@@ -69,6 +63,7 @@ public class HiloBiblioteca implements Runnable {
 					
 				}else {	
 				
+					// Procesa la petición del cliente para buscar por ISBN
 					if (texto.contains("@")) {
 						
 						HiloBiblioteca hiloBusca = new HiloBiblioteca();
@@ -77,10 +72,9 @@ public class HiloBiblioteca implements Runnable {
 						
 						System.out.println(hilo.getName() + " busca el libro: " + respuestaServidor );
 						
-						//Le mandamos la respuesta al cliente
 						salida.println(respuestaServidor);
 						
-						
+					// Procesa la petición del cliente para buscar por Título
 					} else if (texto.contains("/"))  {
 						
 						HiloBiblioteca hiloBusca = new HiloBiblioteca();
@@ -89,12 +83,10 @@ public class HiloBiblioteca implements Runnable {
 						
 						System.out.println(hilo.getName() + " busca el libro: " + respuestaServidor );
 						
-						//Le mandamos la respuesta al cliente
 						salida.println(respuestaServidor);
-						
-					}
-						
-					else if (texto.contains("*"))  {
+					
+					// Procesa la petición del cliente para buscar por autor	
+					} else if (texto.contains("*"))  {
 							
 						HiloBiblioteca hiloBusca = new HiloBiblioteca();
 						texto = texto.replace("*", "").trim();
@@ -102,9 +94,10 @@ public class HiloBiblioteca implements Runnable {
 							
 						System.out.println(hilo.getName() + " busca el libro: " + respuestaServidor);
 							
-						//Le mandamos la respuesta al cliente
-						salida.println(respuestaServidor);	
 						
+						salida.println(respuestaServidor);	
+					
+					// Procesa la petición del cliente para añadir un libro completo
 					}else if (texto.contains("%"))  {
 							
 						HiloBiblioteca hiloBusca = new HiloBiblioteca();
@@ -115,8 +108,7 @@ public class HiloBiblioteca implements Runnable {
 						respuestaServidor= " Libro añadido correctamente ---> " + hiloBusca.mostrarUltimoBiblioteca() ;
 								
 						System.out.println(hilo.getName() + " busca el libro: " + respuestaServidor);
-								
-						//Le mandamos la respuesta al cliente
+
 						salida.println(respuestaServidor);	
 						
 					} else {
@@ -153,7 +145,8 @@ public class HiloBiblioteca implements Runnable {
         }        
         return "El libro con ese ISBN no está en la biblioteca";
     }
-			
+	
+	//Método para buscar por título
 	public String buscaTitulo(String titulo){
         Libro libro;           
         for(int i=0; i<biblioteca.size(); i++){
@@ -166,6 +159,7 @@ public class HiloBiblioteca implements Runnable {
         return "El libro con ese título no está en la biblioteca";
     }
 	
+	//Método para buscar por autor
 	public String buscaAutor(String autor){
 		Libro libro = new Libro();
 		String resultado = "";
@@ -182,28 +176,30 @@ public class HiloBiblioteca implements Runnable {
 	        return "No hay libros de ese autor en la biblioteca";
 	    }
 						
-		            	      
-		public String mostrarBiblioteca() {
-			String resultado="";
-			if (biblioteca.size()==0) {
-				System.out.println("la lista está vacia");
-			}else {
-				for (Libro var: biblioteca)
-					resultado+= var.toString() + " ---";
-		}
-			return resultado;	
-	}
-		
-		public String mostrarUltimoBiblioteca() {
-			String resultado="";
-			if (biblioteca.size()==0) {
-				System.out.println("la lista está vacia");
-			}else {
-				resultado=biblioteca.get(biblioteca.size()-1).toString();
+	//Método para mostrar al lista de libros de la biblioteca.            	      
+	public String mostrarBiblioteca() {
+		String resultado="";
+		if (biblioteca.size()==0) {
+			System.out.println("la lista está vacia");
+		}else {
+			for (Libro var: biblioteca)
+				resultado+= var.toString() + " ---";
 		}
 			return resultado;	
 	}
 	
+	//Método para mostrar el último libro añadido a la biblioteca. 
+	public String mostrarUltimoBiblioteca() {
+		String resultado="";
+		if (biblioteca.size()==0) {
+			System.out.println("la lista está vacia");
+		}else {
+			resultado=biblioteca.get(biblioteca.size()-1).toString();
+		}
+		return resultado;	
+	}
+	
+		//Método para agregar libros a la bilioteca.
 		public boolean addLibro(Libro libro) {
 			return biblioteca.add(libro);
 		}	
