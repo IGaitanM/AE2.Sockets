@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class Cliente {
 	
 	// IP y Puerto a la que nos vamos a conectar
-	public static final int PUERTO = 2018;
+	public static final int PUERTO = 666;
 	public static final String IP_SERVER = "localhost";
 	
 	public static void main(String[] args) {
@@ -39,7 +39,8 @@ public class Cliente {
 			do {
 				
 				System.out.println(" \nElige una opción entre las siguientes: \n" + "----> 1. Consultar libro por ISBN \n" + 
-									"----> 2. Consultar libro por título. \n" + "----> 3. Salir de la aplicación");
+									"----> 2. Consultar libro por título. \n" + "----> 3. Consultar libro por autor. \n" + 
+									"----> 4. Salir de la aplicación");
 				
 				opcion = sc.nextLine(); //recoge el número que elegiremos en el menú anterior	.
 				
@@ -56,8 +57,14 @@ public class Cliente {
 						
 						break;
 					case "3":
-						System.out.println("Hasta luego");
+						System.out.println("Introduzca el autor");
+						texto = sc.nextLine() + "*";
+						
+						break;
+					case "4":
+						
 						continuar = false;
+						socketAlServidor.close();
 						break;
 					default:
 					

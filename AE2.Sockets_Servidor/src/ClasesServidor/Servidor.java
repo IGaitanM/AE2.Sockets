@@ -10,7 +10,7 @@ package ClasesServidor;
 	
 	public class Servidor {
 		
-		public static final int PUERTO = 2018;
+		public static final int PUERTO = 666;
 		
 		public static void main(String[] args) {
 			System.out.println("        SERVIDOR       ");
@@ -25,7 +25,7 @@ package ClasesServidor;
 				System.out.println("SERVIDOR: Esperando peticion por el puerto " + PUERTO);
 				
 				while (true) {
-					//Por cada peticion de cliente aceptada se me crea un objeto socket diferente
+					//Por cada peticion de cliente aceptada se crea un objeto socket diferente
 					Socket socketAlCliente = servidor.accept();
 					System.out.println("SERVIDOR: peticion numero " + ++peticion + " recibida");
 					//Abrimos un hilo nuevo y liberamos el hilo principal para que pueda

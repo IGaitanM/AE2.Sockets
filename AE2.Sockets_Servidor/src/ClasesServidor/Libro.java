@@ -110,7 +110,7 @@ public class Libro {
 
 	@Override
 	public String toString() {
-		return titulo + ", Autor=" + autor + ", ISBN=" + isbn  + ", Precio=" + precio ;
+		return titulo + ", AUTOR= " + autor + ", ISBN= " + isbn  + ", PRECIO= " + precio + "€";
 	}
 
 	

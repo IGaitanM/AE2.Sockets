@@ -17,23 +17,17 @@ public class HiloBiblioteca implements Runnable {
 		numCliente++;
 		hilo = new Thread(this, "Cliente_"+numCliente);
 		this.socketAlCliente = socketAlCliente;
-		biblioteca= new ArrayList<Libro>();
-			biblioteca.add(new Libro("9780756413712", "El Nombre Del Viento", "Patrick Rothfuss", 10.40));
-			biblioteca.add(new Libro("9788448037246", "El Elfo Oscuro", "R.A Slvatore ", 190));
-			biblioteca.add(new Libro("9788408043645", "La sombra del viento", "Carlos Ruiz Zafón", 8));
-			biblioteca.add(new Libro("9788496940000", "El Médico", "Noah Gordon", 11.35));
-			biblioteca.add(new Libro("9788416858217", "Materia OScura", "Blake Crouch", 16.15));
-			
 		hilo.start();
 	}
 	
 	public HiloBiblioteca () {
 		biblioteca= new ArrayList<Libro>();
 		biblioteca.add(new Libro("9780756413712", "El Nombre Del Viento", "Patrick Rothfuss", 10.40));
-		biblioteca.add(new Libro("9788448037246", "El Elfo Oscuro", "R.A Slvatore ", 190));
+		biblioteca.add(new Libro("9788448037246", "El Elfo Oscuro", "R.A Slvatore", 190));
 		biblioteca.add(new Libro("9788408043645", "La sombra del viento", "Carlos Ruiz Zafón", 8));
 		biblioteca.add(new Libro("9788496940000", "El Médico", "Noah Gordon", 11.35));
 		biblioteca.add(new Libro("9788416858217", "Materia OScura", "Blake Crouch", 16.15));
+		biblioteca.add(new Libro("9788499899619", "El Temor de un Hombre Sabio", "Patrick Rothfuss", 10.95));
 		
 	}
 		
@@ -58,16 +52,15 @@ public class HiloBiblioteca implements Runnable {
 			
 			while (continuar) {
 				texto = entradaBuffer.readLine();
-				
 				String respuestaServidor;
 				
-				if (texto.trim().contains("@")) {
+				if (texto.contains("@")) {
 					
 					HiloBiblioteca hiloBusca = new HiloBiblioteca();
-					String[] textoRecibido = texto.split("@");
-					respuestaServidor= hiloBusca.buscaIsbn(textoRecibido[0]).toString();
+					texto = texto.replace("@", "");
+					respuestaServidor= hiloBusca.buscaIsbn(texto.trim().toString());
 					
-					System.out.println(hilo.getName() + " dice: El libro que buscas es" + respuestaServidor );
+					System.out.println(hilo.getName() + " busca el libro: " + respuestaServidor );
 					
 					//Le mandamos la respuesta al cliente
 					salida.println(respuestaServidor);
@@ -75,9 +68,31 @@ public class HiloBiblioteca implements Runnable {
 					
 				} else if (texto.contains("/"))  {
 					
-					respuestaServidor= buscaTitulo(texto).toString();
+					HiloBiblioteca hiloBusca = new HiloBiblioteca();
+					texto = texto.replace("/", "").trim();
+					respuestaServidor= hiloBusca.buscaTitulo(texto.trim().toString());
 					
+					System.out.println(hilo.getName() + " busca el libro: " + respuestaServidor );
 					
+					//Le mandamos la respuesta al cliente
+					salida.println(respuestaServidor);
+					
+				}
+					
+				else if (texto.contains("*"))  {
+						
+					HiloBiblioteca hiloBusca = new HiloBiblioteca();
+					texto = texto.replace("*", "").trim();
+					respuestaServidor= hiloBusca.buscaAutor(texto.toString());
+						
+					System.out.println(hilo.getName() + " busca el libro: " + respuestaServidor);
+						
+					//Le mandamos la respuesta al cliente
+					salida.println(respuestaServidor);	
+					
+				} else {
+					System.out.println("Servidor cerrado");
+					socketAlCliente.close();
 					
 				}
 			}
@@ -86,10 +101,10 @@ public class HiloBiblioteca implements Runnable {
 			//Notese que si no cerramos el socket ni en el servidor ni en el cliente, mantendremos
 			//la comunicacion abierta
 		} catch (IOException e) {
-			System.err.println("HiloContadorLetras: Error de entrada/salida");
+			System.err.println("HiloBiblioteca: Error de entrada/salida");
 			e.printStackTrace();
 		} catch (Exception e) {
-			System.err.println("HiloContadorLetras: Error");
+			System.err.println("HiloBiblioteca: Error");
 			e.printStackTrace();
 		}
 	}
@@ -105,7 +120,7 @@ public class HiloBiblioteca implements Runnable {
                 return libro.toString();                
             }
         }        
-        return "El libro no está en la biblioteca";
+        return "El libro con ese ISBN no está en la biblioteca";
     }
 			
 	public String buscaTitulo(String titulo){
@@ -117,8 +132,48 @@ public class HiloBiblioteca implements Runnable {
                 return libro.toString();                
             }
         }        
-        return "El libro no está en la biblioteca";
+        return "El libro con ese título no está en la biblioteca";
     }
+	
+	public String buscaAutor(String autor){
+		Libro libro;
+		String resultado = "";
+		   for(int i=0; i<biblioteca.size(); i++){
+			   libro=biblioteca.get(i);
+		            
+		       if (libro.getAutor().equals(autor)) {
+		    	   resultado+= libro.toString() + "  ,  ";
+		    	   if (i == (biblioteca.size() - 1)) {
+		    		   return resultado;
+		            }
+		        }
+		     } 
+	        return "No hay libros de ese autor en la biblioteca";
+	    }
+						
+		            	      
+		public String buscaAutor2(String autor){
+			Libro libro=new Libro();
+			int i = 0;
+			String resultado = null;
+			do  {
+				for( i=0; i<biblioteca.size(); i++){
+		            libro=biblioteca.get(i);
+		            
+		            if(libro.getTitulo().equals(autor)){
+		            	resultado=libro.toString();
+		                return resultado;                
+		            }
+				}
+				
+				}while (i==biblioteca.size());
+			
+			return resultado;
+					
+			
+			
+		}
+	
 		
 		
 		public ArrayList<Libro> getBiblioteca() {
@@ -129,15 +184,24 @@ public class HiloBiblioteca implements Runnable {
 			this.biblioteca = biblioteca;
 		}
 
-//		public static void main(String[] args) {
+		public static void main(String[] args) {
+			
+//		HiloBiblioteca hilosss = new HiloBiblioteca();
+//		String salida = hilosss.buscaAutor("Patrick Rothfuss");
+//		System.out.println(salida);
+			
+//			String libros[]=new String[3];
+//			libros[0]="gfdgfdhbgfd";
+//			libros[1]="iiiiiiiiiii";
+//			libros[2]="yhhdhhhhhh";
 //			
-//			HiloBiblioteca hilosss = new HiloBiblioteca();
-//			String caca= hilosss.buscaIsbn("9780756413712");
-//			System.out.println(caca);
-//			
-//			
-//		}
+//			 for (int i=0; i<libros.length; i++) {
+//				 System.out.println(libros[i]);				 
+			 }
+			
+			
+		}
 	
 	
-}
+
 
