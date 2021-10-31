@@ -40,7 +40,7 @@ public class Cliente {
 				
 				System.out.println(" \nElige una opción entre las siguientes: \n" + "----> 1. Consultar libro por ISBN \n" + 
 									"----> 2. Consultar libro por título. \n" + "----> 3. Consultar libro por autor. \n" + 
-									"----> 4. Salir de la aplicación");
+									"----> 4. Añadir Libro \n" + "----> 5. Salir de la aplicación");
 				
 				opcion = sc.nextLine(); //recoge el número que elegiremos en el menú anterior	.
 				
@@ -62,10 +62,24 @@ public class Cliente {
 						
 						break;
 					case "4":
+						System.out.println("Añade el ISBN");
+						texto = sc.nextLine() + "%";
+						System.out.println("Añade el título");
+						texto += sc.nextLine() + "%";
+						System.out.println("Añade el autor");
+						texto += sc.nextLine() + "%";
+						System.out.println("Añade el precio");
+						texto += sc.nextLine() + "%";
 						
-						continuar = false;
-						socketAlServidor.close();
+						
 						break;
+					case "5":
+						
+						texto="FIN";
+						continuar = false;
+						
+						break;	
+						
 					default:
 					
 					System.out.println("Elige la opción escribiendo un número, por favor");

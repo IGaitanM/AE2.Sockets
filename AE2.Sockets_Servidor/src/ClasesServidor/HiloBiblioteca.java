@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.ArrayList;
+//import java.util.Scanner;
 
 public class HiloBiblioteca implements Runnable {
 	
@@ -18,6 +19,13 @@ public class HiloBiblioteca implements Runnable {
 		hilo = new Thread(this, "Cliente_"+numCliente);
 		this.socketAlCliente = socketAlCliente;
 		hilo.start();
+		biblioteca= new ArrayList<Libro>();
+		biblioteca.add(new Libro("9780756413712", "El Nombre Del Viento", "Patrick Rothfuss", 10.40));
+		biblioteca.add(new Libro("9788448037246", "El Elfo Oscuro", "R.A Slvatore", 190));
+		biblioteca.add(new Libro("9788408043645", "La sombra del viento", "Carlos Ruiz Zafón", 8));
+		biblioteca.add(new Libro("9788496940000", "El Médico", "Noah Gordon", 11.35));
+		biblioteca.add(new Libro("9788416858217", "Materia OScura", "Blake Crouch", 16.15));
+		biblioteca.add(new Libro("9788499899619", "El Temor de un Hombre Sabio", "Patrick Rothfuss", 10.95));
 	}
 	
 	public HiloBiblioteca () {
@@ -54,48 +62,71 @@ public class HiloBiblioteca implements Runnable {
 				texto = entradaBuffer.readLine();
 				String respuestaServidor;
 				
-				if (texto.contains("@")) {
+				if (texto.equalsIgnoreCase("FIN")) {
+					salida.println("Cerrando conexión");
+					System.out.println(hilo.getName() + " ha cerrado la comunicacion");
+					continuar = false;
 					
-					HiloBiblioteca hiloBusca = new HiloBiblioteca();
-					texto = texto.replace("@", "");
-					respuestaServidor= hiloBusca.buscaIsbn(texto.trim().toString());
-					
-					System.out.println(hilo.getName() + " busca el libro: " + respuestaServidor );
-					
-					//Le mandamos la respuesta al cliente
-					salida.println(respuestaServidor);
-					
-					
-				} else if (texto.contains("/"))  {
-					
-					HiloBiblioteca hiloBusca = new HiloBiblioteca();
-					texto = texto.replace("/", "").trim();
-					respuestaServidor= hiloBusca.buscaTitulo(texto.trim().toString());
-					
-					System.out.println(hilo.getName() + " busca el libro: " + respuestaServidor );
-					
-					//Le mandamos la respuesta al cliente
-					salida.println(respuestaServidor);
-					
-				}
-					
-				else if (texto.contains("*"))  {
+				}else {	
+				
+					if (texto.contains("@")) {
 						
-					HiloBiblioteca hiloBusca = new HiloBiblioteca();
-					texto = texto.replace("*", "").trim();
-					respuestaServidor= hiloBusca.buscaAutor(texto.toString());
+						HiloBiblioteca hiloBusca = new HiloBiblioteca();
+						texto = texto.replace("@", "");
+						respuestaServidor= hiloBusca.buscaIsbn(texto.trim().toString());
 						
-					System.out.println(hilo.getName() + " busca el libro: " + respuestaServidor);
+						System.out.println(hilo.getName() + " busca el libro: " + respuestaServidor );
 						
-					//Le mandamos la respuesta al cliente
-					salida.println(respuestaServidor);	
-					
-				} else {
-					System.out.println("Servidor cerrado");
-					socketAlCliente.close();
-					
-				}
+						//Le mandamos la respuesta al cliente
+						salida.println(respuestaServidor);
+						
+						
+					} else if (texto.contains("/"))  {
+						
+						HiloBiblioteca hiloBusca = new HiloBiblioteca();
+						texto = texto.replace("/", "").trim();
+						respuestaServidor= hiloBusca.buscaTitulo(texto.trim().toString());
+						
+						System.out.println(hilo.getName() + " busca el libro: " + respuestaServidor );
+						
+						//Le mandamos la respuesta al cliente
+						salida.println(respuestaServidor);
+						
+					}
+						
+					else if (texto.contains("*"))  {
+							
+						HiloBiblioteca hiloBusca = new HiloBiblioteca();
+						texto = texto.replace("*", "").trim();
+						respuestaServidor= hiloBusca.buscaAutor(texto.toString());
+							
+						System.out.println(hilo.getName() + " busca el libro: " + respuestaServidor);
+							
+						//Le mandamos la respuesta al cliente
+						salida.println(respuestaServidor);	
+						
+					}else if (texto.contains("%"))  {
+							
+						HiloBiblioteca hiloBusca = new HiloBiblioteca();
+						String[] textoRecibido = texto.split("%");
+						Libro libro= new Libro(textoRecibido[0].toString(), textoRecibido[1].toString(),
+												textoRecibido[2].toString(), Double.parseDouble(textoRecibido[3].toString()));
+						hiloBusca.addLibro(libro);
+						respuestaServidor= " Libro añadido correctamente ---> " + hiloBusca.mostrarUltimoBiblioteca() ;
+								
+						System.out.println(hilo.getName() + " busca el libro: " + respuestaServidor);
+								
+						//Le mandamos la respuesta al cliente
+						salida.println(respuestaServidor);	
+						
+					} else {
+						System.out.println("Servidor cerrado");
+						socketAlCliente.close();
+						
+					}
+				}	
 			}
+				
 			//Cerramos el socket
 			socketAlCliente.close();
 			//Notese que si no cerramos el socket ni en el servidor ni en el cliente, mantendremos
@@ -136,7 +167,7 @@ public class HiloBiblioteca implements Runnable {
     }
 	
 	public String buscaAutor(String autor){
-		Libro libro;
+		Libro libro = new Libro();
 		String resultado = "";
 		   for(int i=0; i<biblioteca.size(); i++){
 			   libro=biblioteca.get(i);
@@ -152,28 +183,30 @@ public class HiloBiblioteca implements Runnable {
 	    }
 						
 		            	      
-		public String buscaAutor2(String autor){
-			Libro libro=new Libro();
-			int i = 0;
-			String resultado = null;
-			do  {
-				for( i=0; i<biblioteca.size(); i++){
-		            libro=biblioteca.get(i);
-		            
-		            if(libro.getTitulo().equals(autor)){
-		            	resultado=libro.toString();
-		                return resultado;                
-		            }
-				}
-				
-				}while (i==biblioteca.size());
-			
-			return resultado;
-					
-			
-			
+		public String mostrarBiblioteca() {
+			String resultado="";
+			if (biblioteca.size()==0) {
+				System.out.println("la lista está vacia");
+			}else {
+				for (Libro var: biblioteca)
+					resultado+= var.toString() + " ---";
 		}
+			return resultado;	
+	}
+		
+		public String mostrarUltimoBiblioteca() {
+			String resultado="";
+			if (biblioteca.size()==0) {
+				System.out.println("la lista está vacia");
+			}else {
+				resultado=biblioteca.get(biblioteca.size()-1).toString();
+		}
+			return resultado;	
+	}
 	
+		public boolean addLibro(Libro libro) {
+			return biblioteca.add(libro);
+		}	
 		
 		
 		public ArrayList<Libro> getBiblioteca() {
@@ -184,11 +217,12 @@ public class HiloBiblioteca implements Runnable {
 			this.biblioteca = biblioteca;
 		}
 
+
 		public static void main(String[] args) {
-			
+//			
 //		HiloBiblioteca hilosss = new HiloBiblioteca();
 //		String salida = hilosss.buscaAutor("Patrick Rothfuss");
-//		System.out.println(salida);
+//		hilosss.mostrarBiblioteca();
 			
 //			String libros[]=new String[3];
 //			libros[0]="gfdgfdhbgfd";
@@ -196,7 +230,25 @@ public class HiloBiblioteca implements Runnable {
 //			libros[2]="yhhdhhhhhh";
 //			
 //			 for (int i=0; i<libros.length; i++) {
-//				 System.out.println(libros[i]);				 
+//				 System.out.println(libros[i]);	
+//		Scanner sc= new Scanner(System.in);
+//		
+//		System.out.println("introduce un ISBN");
+//		String textos = sc.nextLine() + ("%");
+//		System.out.println("introduce un autor");
+//		textos += sc.nextLine() + ("%");
+//		
+//		System.out.println(textos);
+		
+//		sc.close();
+			
+//		HiloBiblioteca hilo1= new HiloBiblioteca();
+//		Libro libro1= new Libro("666", "caca", "culo", 22);
+//		hilo1.addLibro(libro1);
+//		System.out.println(hilo1.mostrarUltimoBiblioteca());
+//		
+		
+		
 			 }
 			
 			
